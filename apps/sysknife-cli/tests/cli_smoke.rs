@@ -174,8 +174,8 @@ async fn audit_verify_exits_with_code_1_when_anchor_is_truncated() {
 
     let dir = tempfile::tempdir().expect("create CLI fixture directory");
     let db_path = dir.path().join("daemon.sqlite");
-    let key = AuditKey::load_or_generate(&resolve_audit_key_path(&db_path))
-        .expect("generate audit key");
+    let key =
+        AuditKey::load_or_generate(&resolve_audit_key_path(&db_path)).expect("generate audit key");
     let store = TransactionStore::open_with_key(&db_path, Arc::new(key.clone()))
         .expect("create audit store");
     store
@@ -195,13 +195,9 @@ async fn audit_verify_exits_with_code_1_when_anchor_is_truncated() {
     let sink = PostgresCheckpointSink::connect(&scoped_url)
         .await
         .expect("connect checkpoint sink");
-    sink.append(&key.sign_checkpoint(
-        2,
-        "anchored-tip-beyond-local-chain",
-        "2026-09-02T12:00:00Z",
-    ))
-    .await
-    .expect("store checkpoint beyond the local tip");
+    sink.append(&key.sign_checkpoint(2, "anchored-tip-beyond-local-chain", "2026-09-02T12:00:00Z"))
+        .await
+        .expect("store checkpoint beyond the local tip");
     drop(sink);
 
     let output = cli()
