@@ -205,7 +205,7 @@ async fn audit_verify_exits_with_code_1_when_anchor_is_truncated() {
         .env("SYSKNIFE_CHECKPOINT_DB", &scoped_url)
         .env("HOME", dir.path())
         .env("XDG_CONFIG_HOME", dir.path())
-        .args(["audit", "verify"])
+        .args(["audit", "verify", "--json"])
         .output()
         .expect("run audit verify");
 
@@ -222,6 +222,14 @@ async fn audit_verify_exits_with_code_1_when_anchor_is_truncated() {
         "stdout: {}\nstderr: {}",
         String::from_utf8_lossy(&output.stdout),
         String::from_utf8_lossy(&output.stderr)
+    );
+    let doc: serde_json::Value =
+        serde_json::from_slice(&output.stdout).expect("--json emits one document");
+    assert_eq!(
+        doc["status"],
+        "broken",
+        "the --json verdict must reflect the anchor: {}",
+        String::from_utf8_lossy(&output.stdout)
     );
 }
 
