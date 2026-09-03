@@ -1015,11 +1015,7 @@ pub async fn run_audit_verify(args: AuditVerifyArgs, log: &Logger) -> Result<(),
     // this command used to report `audit_anchor: {configured: true}` without
     // ever reading the anchor — implying a check it did not perform.
     let anchor = verify_configured_anchor(&lacs_config, &db_path, &verifier).await;
-    let anchor_exit = anchor
-        .as_ref()
-        .map(sysknife_daemon::audit_chain::checkpoint_outcome_to_exit_code)
-        .unwrap_or(0);
-    let exit_code = outcome.exit_code().max(anchor_exit);
+    let exit_code = combined_verification_exit_code(&outcome, anchor.as_ref());
     emit_verification(&args, log, &outcome, &label_for_diag, anchor.as_ref());
     if exit_code == 0 {
         Ok(())
