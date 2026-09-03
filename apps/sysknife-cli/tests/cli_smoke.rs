@@ -134,8 +134,8 @@ fn audit_verify_exits_with_code_2_when_the_key_file_is_missing() {
 fn audit_verify_exit_code_prefers_broken_chain_to_inconclusive_anchor() {
     let dir = tempfile::tempdir().expect("create CLI fixture directory");
     let db_path = dir.path().join("daemon.sqlite");
-    let key = AuditKey::load_or_generate(&dir.path().join("audit-key"))
-        .expect("generate audit key");
+    let key =
+        AuditKey::load_or_generate(&dir.path().join("audit-key")).expect("generate audit key");
     let store = TransactionStore::open_with_key(&db_path, Arc::new(key.clone()))
         .expect("create audit store");
     store
